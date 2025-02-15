@@ -1,4 +1,4 @@
-# React &middot; Express &middot; Cuple Boilerplate
+# Admin panel
 
 # Getting started
 (rootless docker is recommended)
