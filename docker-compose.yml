@@ -21,5 +21,17 @@ services:
     networks:
       - mynet
 
+  database:
+    image: mariadb:10.6
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: a1s2d3f4
+    ports: 
+      - 3306:3306
+    volumes:
+      - ./database/:/var/lib/mysql
+    networks:
+      - mynet
+
 networks:
   mynet:
