@@ -1,5 +1,6 @@
+import { useState } from "react";
+import EditPage from "./EditPage";
 import { buttons, container, menu } from "./styles.css";
-import { Outlet, useNavigate } from "react-router";
 
 export default function Layout() {
   const tables = [
@@ -7,7 +8,7 @@ export default function Layout() {
     { name: "Products", path: "products" },
     { name: "Categories", path: "categories" },
   ];
-  const nav = useNavigate();
+  const [nav, setNav] = useState(tables[0].path);
 
   return (
     <div className={container}>
@@ -17,14 +18,15 @@ export default function Layout() {
             key={i}
             className={buttons}
             onClick={() => {
-              nav("/");
+              setNav(e.path);
             }}
+            style={{ backgroundColor: e.path == nav ? "#0e2339" : "#223143" }}
           >
             {e.name}
           </div>
         ))}
       </div>
-      <Outlet />
+      <EditPage nav={nav} />
     </div>
   );
 }

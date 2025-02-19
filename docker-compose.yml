@@ -23,7 +23,6 @@ services:
 
   database:
     image: mariadb:10.6
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: a1s2d3f4
     ports: 
