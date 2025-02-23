@@ -4,7 +4,6 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { defineConfig } from "vite";
 import viteCompression from "vite-plugin-compression";
-import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 
 export default defineConfig(() => {
   return {
@@ -16,13 +15,7 @@ export default defineConfig(() => {
         },
       ],
     },
-    plugins: [
-      react(),
-      viteCompression(),
-      vanillaExtractPlugin({
-        identifiers: ({ hash }) => `prefix_${hash}`,
-      }),
-    ],
+    plugins: [react(), viteCompression()],
     server: {
       host: "0.0.0.0",
       port: 3000,
