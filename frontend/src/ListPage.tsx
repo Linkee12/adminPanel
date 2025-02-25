@@ -18,14 +18,6 @@ export default function ListPage() {
   const [filter, setFilter] = useState<string>("");
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!tableName) return;
-      const response = await client.list.get({
-        query: { tableName },
-      });
-      if (response.result !== "success") return;
-      setRows(response.rows);
-    };
     fetchData();
     setSelectedRowIds([]);
   }, [tableName]);
@@ -40,6 +32,22 @@ export default function ListPage() {
 
   const isAllChecked = selectedRowIds.length == rows.length;
   const columnNames = Object.keys(rows?.[0] || {});
+
+  async function fetchData() {
+    if (!tableName) return;
+    const response = await client.list.get({
+      query: { tableName },
+    });
+    if (response.result !== "success") return;
+    setRows(response.rows);
+  }
+
+  async function deleteRow(tableName: string, id: number[]) {
+    const response = await client.delete.post({ body: { tableName, id } });
+    if (response.result !== "success") return;
+    fetchData();
+  }
+
   return (
     <Container>
       <HeaderPortal>
@@ -105,7 +113,13 @@ export default function ListPage() {
                 </Icon>
               </td>
               <td>
-                <Icon>
+                <Icon
+                  onClick={() => {
+                    if (tableName) {
+                      deleteRow(tableName, [row.id]);
+                    }
+                  }}
+                >
                   <MdDelete size={24} />
                 </Icon>
               </td>

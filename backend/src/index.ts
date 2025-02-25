@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { createBuilder, success, initRpc } from "@cuple/server";
 import { z } from "zod";
-import { getTablesData, TableName } from "./modell";
+import { deleteRow, getTablesData, TableName } from "./modell";
 
 dotenv.config();
 
@@ -22,6 +22,12 @@ const routes = {
       return success({
         rows,
       });
+    }),
+  delete: builder
+    .bodySchema(z.object({ tableName: z.string(), id: z.array(z.number()) }))
+    .post(async ({ data }) => {
+      const res = await deleteRow(data.body.tableName as TableName, data.body.id);
+      return success({ res });
     }),
 };
 
