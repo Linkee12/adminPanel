@@ -1,9 +1,3 @@
-import fs from "node:fs";
+import { Prisma } from "@prisma/client";
 
-export default class getInfoFromPrismaSchema {
-  private path: string;
-
-  constructor(src: string) {
-    this.path = src;
-  }
-}
+console.log(Prisma.dmmf.datamodel.models[1]);

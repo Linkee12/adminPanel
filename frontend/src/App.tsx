@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router";
 import Layout from "./Layout";
 import { globalCss } from "@stitches/react";
 import ListPage from "./ListPage";
+import EditPage from "./EditPage";
+import CreatePage from "./CreatePage";
 export const ROUTES = {
   list: (tableName: string) => `/${tableName}`,
   create: (tableName: string) => `/${tableName}/create`,
@@ -16,8 +18,8 @@ function App() {
       <Route element={<Layout />}>
         <Route path="/"></Route>
         <Route path={ROUTES.list(":tableName")} element={<ListPage />}></Route>
-        <Route path={ROUTES.create(":tableName")}></Route>
-        <Route path={ROUTES.edit(":tableName", ":id")}></Route>
+        <Route path={ROUTES.create(":tableName")} element={<CreatePage />}></Route>
+        <Route path={ROUTES.edit(":tableName", ":id")} element={<EditPage />}></Route>
       </Route>
     </Routes>
   );

@@ -6,15 +6,14 @@ type Models = PrismaModels<Prisma.ModelName, Prisma.TypeMap>;
 type OneOfTableNames = "categories";
 export type Row = Record<string, string | boolean | number> & { id: number };
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  datasourceUrl: process.env["BACKEND_DATABASE_URL"] || "",
+});
 
 export async function getTablesData(tableName: TableName): Promise<Row[]> {
   return await prisma[tableName as OneOfTableNames].findMany();
 }
-export async function deleteRow(
-  tableName: TableName,
-  ids: number[],
-): Promise<true | false> {
+export async function deleteRow(tableName: TableName, ids: number[]) {
   try {
     await prisma[tableName as OneOfTableNames].deleteMany({
       where: {
@@ -23,9 +22,8 @@ export async function deleteRow(
         },
       },
     });
-    return true;
   } catch (error) {
-    console.error("Hiba a deleteRow-ban:", error);
-    return false;
+    console.log(error);
+    throw error;
   }
 }

@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { useEffect, useMemo, useState } from "react";
 import { styled } from "@stitches/react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { HeaderPortal } from "./Layout";
 import { client } from "./cuple";
 import type { Row } from "../../backend/src/modell";
@@ -9,6 +9,7 @@ import { MdDelete } from "react-icons/md";
 import { MdDeleteSweep } from "react-icons/md";
 import { MdEditSquare } from "react-icons/md";
 import { RiEdit2Fill } from "react-icons/ri";
+import { ROUTES } from "./App";
 
 export default function ListPage() {
   const { tableName } = useParams();
@@ -16,6 +17,7 @@ export default function ListPage() {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const [selectedField, setSelectedField] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
+  const nav = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -44,6 +46,8 @@ export default function ListPage() {
 
   async function deleteRow(tableName: string, id: number[]) {
     const response = await client.delete.post({ body: { tableName, id } });
+
+    console.log(response);
     if (response.result !== "success") return;
     fetchData();
   }
@@ -108,7 +112,13 @@ export default function ListPage() {
                 <td key={columnName}> {columnValue}</td>
               ))}
               <td>
-                <Icon>
+                <Icon
+                  onClick={() => {
+                    if (tableName) {
+                      nav(ROUTES.edit(tableName, row.id), { state: row });
+                    }
+                  }}
+                >
                   <RiEdit2Fill size={24} />
                 </Icon>
               </td>
