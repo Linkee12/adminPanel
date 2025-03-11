@@ -4,12 +4,13 @@ import { styled } from "@stitches/react";
 import { useNavigate, useParams } from "react-router";
 import { HeaderPortal } from "./Layout";
 import { client } from "./cuple";
-import type { Row } from "../../backend/src/modell";
+import type { Row } from "../../backend/src/model";
 import { MdDelete } from "react-icons/md";
 import { MdDeleteSweep } from "react-icons/md";
 import { MdEditSquare } from "react-icons/md";
 import { RiEdit2Fill } from "react-icons/ri";
 import { ROUTES } from "./App";
+import useTypedOutletContext from "./hooks/useTypedOutletContext";
 
 export default function ListPage() {
   const { tableName } = useParams();
@@ -17,6 +18,7 @@ export default function ListPage() {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const [selectedField, setSelectedField] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
+  const context = useTypedOutletContext();
   const nav = useNavigate();
 
   useEffect(() => {
@@ -45,13 +47,11 @@ export default function ListPage() {
   }
 
   async function deleteRow(tableName: string, id: number[]) {
-    const response = await client.delete.post({ body: { tableName, id } });
+    const response = await client.delete.delete({ query: { tableName, id } });
 
-    console.log(response);
     if (response.result !== "success") return;
     fetchData();
   }
-
   return (
     <Container>
       <HeaderPortal>
@@ -84,7 +84,14 @@ export default function ListPage() {
               />
             </th>
             {columnNames.map((columnName, idx) => (
-              <th key={idx}>{columnName}</th>
+              <th
+                key={idx}
+                onClick={() => {
+                  context?.tableName ? nav(ROUTES.list(context?.tableName)) : "";
+                }}
+              >
+                {columnName}
+              </th>
             ))}
             <th>
               <MdEditSquare size={26} />

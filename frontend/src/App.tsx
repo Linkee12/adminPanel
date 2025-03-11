@@ -5,6 +5,7 @@ import { globalCss } from "@stitches/react";
 import ListPage from "./ListPage";
 import EditPage from "./EditPage";
 import CreatePage from "./CreatePage";
+import ResourceLayout from "./ResourceLayout";
 export const ROUTES = {
   list: (tableName: string) => `/${tableName}`,
   create: (tableName: string) => `/${tableName}/create`,
@@ -13,13 +14,16 @@ export const ROUTES = {
 
 function App() {
   globalStyles();
+
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/"></Route>
-        <Route path={ROUTES.list(":tableName")} element={<ListPage />}></Route>
-        <Route path={ROUTES.create(":tableName")} element={<CreatePage />}></Route>
-        <Route path={ROUTES.edit(":tableName", ":id")} element={<EditPage />}></Route>
+        <Route element={<ResourceLayout />}>
+          <Route path="/"></Route>
+          <Route path={ROUTES.list(":tableName")} element={<ListPage />}></Route>
+          <Route path={ROUTES.create(":tableName")} element={<CreatePage />}></Route>
+          <Route path={ROUTES.edit(":tableName", ":id")} element={<EditPage />}></Route>
+        </Route>
       </Route>
     </Routes>
   );

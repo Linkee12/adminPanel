@@ -1,14 +1,40 @@
-import { useLocation } from "react-router";
-import { Row } from "../../backend/src/modell";
-import { useState } from "react";
+import { useLocation, useParams } from "react-router";
+import type { Row } from "../../backend/src/model";
+import { useEffect, useState } from "react";
 import { styled } from "@stitches/react";
+import useTypedOutletContext from "./hooks/useTypedOutletContext";
+import { client } from "./cuple";
+import getInput from "./getInput";
 
 export default function EditPage() {
   const [row, setRow] = useState<Row>(useLocation().state);
+  const [relations, setRelations] = useState<Row[]>([]);
+  const context = useTypedOutletContext();
+  const { tableName } = useParams();
 
-  function isValidDate(dateString: string) {
-    const pattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.d{3}Z/;
-    return pattern.test(dateString);
+  useEffect(() => {
+    if (context?.columnName === undefined) return;
+    if (context?.columnName in row) {
+      getRelation(context.tableName);
+    }
+  }, [row]);
+
+  async function getRelation(tableName: string) {
+    const response = await client.list.get({
+      query: { tableName },
+    });
+    if (response.result !== "success") return;
+    setRelations(response.rows);
+  }
+  const columnName = context?.columnName ? context?.columnName : "";
+
+  async function saveChanges(row: Row) {
+    if (tableName != undefined) {
+      const response = await client.edit.put({
+        body: { ...{ tableName }, data: row },
+      });
+      if (response.result !== "success") return;
+    }
   }
 
   return (
@@ -18,39 +44,21 @@ export default function EditPage() {
           <Name>{key}</Name>
           {key === "id" ? (
             <Name>{value as number}</Name>
-          ) : isValidDate(value as string) ? (
-            <Input
-              key={i}
-              type={"date"}
-              value={typeof row[key] != "boolean" ? row[key] : ""}
-              onChange={(e) => setRow({ ...row, [key]: e.target.value })}
-            ></Input>
-          ) : typeof value === "number" ? (
-            <Input
-              type="number"
-              value={row[key] as number}
-              onChange={(e) => setRow({ ...row, [key]: e.target.value })}
-            ></Input>
-          ) : typeof value === "boolean" ? (
-            <Input type="checkbox" checked={row[key] as boolean}></Input>
           ) : (
-            <Input
-              type="text"
-              value={row[key] as string}
-              onChange={(e) => setRow({ ...row, [key]: e.target.value })}
-            ></Input>
+            getInput(value, key, row, setRow, columnName, relations)
           )}
         </InputContainer>
       ))}
-      <SaveBtn>Save</SaveBtn>
+      <SaveBtn onClick={() => saveChanges(row)}>Save</SaveBtn>
     </Container>
   );
 }
-const Container = styled("div", {
+
+export const Container = styled("div", {
   display: "flex",
   flexDirection: "column",
 });
-const InputContainer = styled("div", {
+export const InputContainer = styled("div", {
   display: "flex",
   flexDirection: "row",
   backgroundColor: "#1E1D24",
@@ -60,16 +68,14 @@ const InputContainer = styled("div", {
   padding: 5,
 });
 
-const Name = styled("h2", {
+export const Name = styled("h2", {
   display: "flex",
   minWidth: "10rem",
   whiteSpace: "nowrap",
   alignItems: "center",
 });
-const Input = styled("input", {
-  fontSize: 18,
-});
-const SaveBtn = styled("button", {
+
+export const SaveBtn = styled("button", {
   width: "6rem",
   height: "3rem",
   fontSize: 24,

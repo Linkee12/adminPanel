@@ -12,7 +12,6 @@ export default function Layout() {
   ];
   const navigate = useNavigate();
   const { tableName } = useParams();
-
   return (
     <Container>
       <Menu>
