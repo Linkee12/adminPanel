@@ -23,7 +23,7 @@ export default function CreatePage() {
     if (columnName in row) {
       getRelation(context.tableName);
     }
-  }, []);
+  }, [row]);
 
   async function fetchData() {
     if (!tableName) return;
@@ -35,7 +35,6 @@ export default function CreatePage() {
       [key],
       initValue(value),
     ]);
-
     setRow(Object.fromEntries(entries));
   }
   async function getRelation(tableName: string) {
@@ -46,6 +45,9 @@ export default function CreatePage() {
     setRelations(response.rows);
   }
   function initValue(value: unknown) {
+    if (isValidDate(value as string)) {
+      return new Date(Date.now()).toISOString();
+    }
     switch (typeof value) {
       case "string":
         return "";
@@ -58,6 +60,19 @@ export default function CreatePage() {
     }
   }
 
+  async function saveChanges(row: Row) {
+    if (tableName != undefined) {
+      const response = await client.add.post({
+        body: { ...{ tableName }, data: row },
+      });
+      if (response.result !== "success") return;
+    }
+  }
+
+  function isValidDate(dateString: string) {
+    const pattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/;
+    return pattern.test(dateString);
+  }
   return (
     <Container>
       {row ? (
@@ -76,7 +91,9 @@ export default function CreatePage() {
       )}
       <SaveBtn
         onClick={() => {
-          console.log(row);
+          if (row) {
+            saveChanges(row);
+          }
         }}
       >
         Save

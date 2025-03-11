@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { createBuilder, success, initRpc } from "@cuple/server";
 import { z } from "zod";
 import {
+  addRow,
   deleteRow,
   getFirstRow,
   getForeignKeys,
@@ -73,15 +74,14 @@ const routes = {
       fail("The edit was failed");
     }
   }),
-  /*
   add: builder.bodySchema(RowSchema).post(async ({ data }) => {
     try {
-      await addRow(data.body.tableName as TableName, data.body);
+      await addRow(data.body.tableName as TableName, data.body.data);
       return success({ message: "succes" });
     } catch (error) {
-      fail("The edit was failed");
+      fail("Add element was failed");
     }
-  }),*/
+  }),
   foreignKeys: builder
     .querySchema(z.object({ tableName: z.string() }))
     .get(async ({ data }) => {

@@ -10,7 +10,7 @@ export default function getInput(
   relationArr: Row[],
 ) {
   function isValidDate(dateString: string) {
-    const pattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.d{3}Z/;
+    const pattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/;
     return pattern.test(dateString);
   }
   if (key == columnName) {

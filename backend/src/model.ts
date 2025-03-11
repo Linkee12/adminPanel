@@ -5,6 +5,7 @@ export type TableName = keyof Models;
 type Models = PrismaModels<Prisma.ModelName, Prisma.TypeMap>;
 type OneOfTableNames = "categories";
 export type Row = Record<string, string | boolean | number> & { id: number };
+type RowWithoutId = Record<string, string | boolean | number>;
 
 const prisma = new PrismaClient({
   datasourceUrl: process.env["BACKEND_DATABASE_URL"] || "",
@@ -69,12 +70,13 @@ export async function updatedRow(tableName: TableName, updatedRow: Row) {
     throw error;
   }
 }
-/*
-export async function addRow<T extends keyof TableName, Row>(
-  tableName: TableName,
-  newRow: T,
-) {
-  await prisma[tableName as OneOfTableNames].create({
-    data: newRow,
-  });
-}*/
+export async function addRow(tableName: string, newRow: RowWithoutId) {
+  delete newRow["id"];
+  console.log(newRow);
+  if (prisma != undefined) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (prisma as any)[tableName].create({
+      data: newRow,
+    });
+  }
+}

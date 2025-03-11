@@ -68,6 +68,15 @@ export default function ListPage() {
           placeholder="Search something..."
           onChange={(e) => setFilter(e.target.value)}
         ></SearchInput>
+        <AddBtn
+          onClick={() => {
+            if (tableName) {
+              nav(ROUTES.create(tableName));
+            }
+          }}
+        >
+          Add
+        </AddBtn>
       </HeaderPortal>
       <Table>
         <thead>
@@ -211,4 +220,17 @@ const SelectInput = styled("select", {
   fontSize: 24,
   fontWeight: 500,
   paddingLeft: 10,
+});
+
+const AddBtn = styled("button", {
+  backgroundColor: "grey",
+  border: "none",
+  borderRadius: 3,
+  fontSize: 24,
+  paddingLeft: "1rem",
+  paddingRight: "1rem",
+  fontWeight: "bold",
+  "&:hover": {
+    backgroundColor: "#0e4059",
+  },
 });
